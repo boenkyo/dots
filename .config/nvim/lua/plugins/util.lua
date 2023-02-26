@@ -5,6 +5,8 @@ return {
 	-- Useful plugin to show you pending keybinds.
 	{ 'folke/which-key.nvim',  opts = {} },
 
+	{ 'nmac427/guess-indent.nvim', opts = {} },
+
 	{ -- Leap
 		'ggandor/leap.nvim',
 		config = function()

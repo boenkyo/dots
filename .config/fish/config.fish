@@ -25,4 +25,3 @@ source $XDG_CONFIG_HOME/fish/aliases.fish
 
 # PATH
 fish_add_path "$HOME/.go/bin"
-export PATH="$HOME/.local/bin/:$PATH"
