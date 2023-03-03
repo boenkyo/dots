@@ -8,12 +8,9 @@ return {
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
-      'MunifTanjim/prettier.nvim',
 
       -- Useful status updates for LSP
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', opts = {} },
-      --{ 'lukas-reineke/lsp-format.nvim', opts = {} },
     },
     config = function()
       vim.diagnostic.config {
@@ -40,27 +37,21 @@ return {
         map('<leader>li', vim.lsp.buf.implementation, '[I]mplementation')
         map('<leader>lt', vim.lsp.buf.type_definition, '[T]ype Definition')
         map(
-          '<leader>ls',
-          vim.lsp.buf.signature_help,
-          '[S]ignature Documentation'
-        )
-
-        map(
-          '<leader>sy',
+          '<leader>ly',
           require('telescope.builtin').lsp_document_symbols,
-          '[S]earch Document S[Y]mbols'
+          'Document S[Y]mbols'
         )
         map(
-          '<leader>sr',
+          '<leader>lr',
           require('telescope.builtin').lsp_references,
-          '[S]earch [R]eferences'
+          '[R]eferences'
         )
 
-        map('<leader>lr', vim.lsp.buf.rename, '[R]ename')
+        map('<leader>ln', vim.lsp.buf.rename, 'Re[n]ame')
         map('<leader>la', vim.lsp.buf.code_action, 'Code [A]ction')
 
         map('K', vim.lsp.buf.hover, 'Hover Documentation')
-        map('<leader>=', function()
+        map('<leader>lf', function()
           local have_nls = #require('null-ls.sources').get_available(
             vim.bo[bufnr].filetype,
             'NULL_LS_FORMATTING'
@@ -77,6 +68,13 @@ return {
             end,
           }
         end, 'Format')
+
+        vim.keymap.set(
+          'i',
+          '<C-s>',
+          vim.lsp.buf.signature_help,
+          { desc = 'Signature help', noremap = true, buffer = bufnr }
+        )
       end
 
       -- Enable the following language servers
@@ -151,6 +149,7 @@ return {
       'hrsh7th/cmp-nvim-lsp',
       'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
+      'hrsh7th/cmp-nvim-lsp-signature-help',
     },
     opts = function()
       local cmp = require('cmp')
@@ -169,6 +168,10 @@ return {
           ['<C-d>'] = cmp.mapping.scroll_docs(4),
           ['<C-.>'] = cmp.mapping.complete {},
           ['<C-f>'] = cmp.mapping.confirm {
+            behavior = cmp.ConfirmBehavior.Replace,
+            select = true,
+          },
+          ['<Right>'] = cmp.mapping.confirm {
             behavior = cmp.ConfirmBehavior.Replace,
             select = true,
           },
@@ -191,6 +194,7 @@ return {
         },
         sources = cmp.config.sources {
           { name = 'nvim_lsp' },
+          { name = 'nvim_lsp_signature_help' },
           { name = 'luasnip' },
           { name = 'buffer' },
           { name = 'path' },

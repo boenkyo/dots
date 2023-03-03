@@ -34,6 +34,6 @@ map("n", "<leader>bd", "<cmd>bdelete<cr>", { desc = "Delete Buffer" })
 -- Windows
 map("n", "<leader>ws", "<C-W>p", { desc = "Other window" })
 map("n", "<leader>wd", "<C-W>c", { desc = "Delete window" })
-map("n", "<leader>ws", "<C-W>s", { desc = "Split window below" })
-map("n", "<leader>wv", "<C-W>v", { desc = "Split window right" })
+map("n", "<leader>w/", "<C-W>s", { desc = "Split window below" })
+map("n", "<leader>w;", "<C-W>v", { desc = "Split window right" })
 return {}
