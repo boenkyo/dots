@@ -61,7 +61,7 @@ return {
     end,
     keys = {
       {
-        '<leader>sf',
+        '<leader><Space>',
         function()
           require('telescope.builtin').find_files()
         end,
@@ -75,7 +75,7 @@ return {
         desc = '[S]earch [O]ld files',
       },
       {
-        '<leader>/',
+        '<leader>sf',
         function()
           require('telescope.builtin').current_buffer_fuzzy_find()
         end,

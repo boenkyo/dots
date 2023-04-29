@@ -1,18 +1,22 @@
 return {
-  { -- Colorscheme
+  {
+    -- Colorscheme
     'sainnhe/gruvbox-material',
-    priority = 1000,
+    -- priority = 1000,
     config = function()
       vim.o.background = 'dark'
-      vim.g.gruvbox_material_enable_bold = 'true'
-      vim.g.gruvbox_material_enable_italic = 'true'
+      vim.g.gruvbox_material_better_performance = true
+      vim.g.gruvbox_material_enable_bold = true
+      vim.g.gruvbox_material_enable_italic = true
+      vim.g.gruvbox_material_background = 'medium'
       vim.cmd.colorscheme('gruvbox-material')
     end,
   },
 
-  { -- Set lualine as statusline
+  {
+    -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
-    -- See `:help lualine.txt`
+    -- see `:help lualine.txt`
     opts = {
       options = {
         theme = 'gruvbox-material',
@@ -20,7 +24,8 @@ return {
     },
   },
 
-  { -- Filetree
+  {
+    -- filetree
     'nvim-neo-tree/neo-tree.nvim',
     dependencies = {
       'nvim-lua/plenary.nvim',
@@ -30,12 +35,7 @@ return {
     keys = {
       {
         '<leader>e',
-        function()
-          require('neo-tree.command').execute {
-            toggle = true,
-            dir = vim.loop.cwd(),
-          }
-        end,
+        '<cmd>Neotree reveal toggle<cr>',
         desc = 'File [E]xplorer (cwd)',
       },
     },
@@ -125,20 +125,36 @@ return {
     },
   },
 
-  { -- Terminal
-    'akinsho/toggleterm.nvim',
-    version = '*',
-    opts = {
-      open_mapping = [[<C-;>]],
-      on_open = function(t)
-        vim.api.nvim_buf_set_keymap(
-          t.bufnr,
-          't',
-          '<esc>',
-          [[<C-\><C-n>]],
-          { noremap = true }
-        )
-      end,
-    },
+  {
+    -- Terminal
+    'numToStr/FTerm.nvim',
+    opts = {},
+    config = function()
+      vim.keymap.set('n', '<C-.>', '<CMD>lua require("FTerm").toggle()<CR>')
+      vim.keymap.set(
+        't',
+        '<C-.>',
+        '<C-\\><C-n><CMD>lua require("FTerm").toggle()<CR>'
+      )
+    end,
   },
+
+  -- { -- Terminal
+  --   'akinsho/toggleterm.nvim',
+  --   version = '*',
+  --   opts = {
+  --     open_mapping = '<leader>t',
+  --     insert_mappings = false,
+  --     terminal_mappings = false,
+  --     on_open = function(t)
+  --       vim.api.nvim_buf_set_keymap(
+  --         t.bufnr,
+  --         't',
+  --         '<esc>',
+  --         [[<C-\><C-n>]],
+  --         { noremap = true }
+  --       )
+  --     end,
+  --   },
+  -- },
 }

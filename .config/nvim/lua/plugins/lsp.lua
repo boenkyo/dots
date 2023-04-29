@@ -1,5 +1,6 @@
 return {
-  { -- LSP config
+  {
+    -- LSP config
     'neovim/nvim-lspconfig',
     event = { 'BufReadPre', 'BufNewFile' },
     dependencies = {
@@ -32,10 +33,10 @@ return {
           )
         end
 
-        map('<leader>ld', vim.lsp.buf.definition, '[D]efinition')
-        map('<leader>lc', vim.lsp.buf.declaration, 'De[C]laration')
-        map('<leader>li', vim.lsp.buf.implementation, '[I]mplementation')
-        map('<leader>lt', vim.lsp.buf.type_definition, '[T]ype Definition')
+        map('gd', vim.lsp.buf.definition, '[D]efinition')
+        map('gD', vim.lsp.buf.declaration, 'De[C]laration')
+        map('gi', vim.lsp.buf.implementation, '[I]mplementation')
+        -- map('gt', vim.lsp.buf.type_definition, '[T]ype Definition')
         map(
           '<leader>ly',
           require('telescope.builtin').lsp_document_symbols,
@@ -47,15 +48,15 @@ return {
           '[R]eferences'
         )
 
-        map('<leader>ln', vim.lsp.buf.rename, 'Re[n]ame')
-        map('<leader>la', vim.lsp.buf.code_action, 'Code [A]ction')
+        map('<leader>n', vim.lsp.buf.rename, 'Re[n]ame')
+        map('<leader>a', vim.lsp.buf.code_action, 'Code [A]ction')
 
         map('K', vim.lsp.buf.hover, 'Hover Documentation')
-        map('<leader>lf', function()
+        map('<leader>f', function()
           local have_nls = #require('null-ls.sources').get_available(
-            vim.bo[bufnr].filetype,
-            'NULL_LS_FORMATTING'
-          ) > 0
+                vim.bo[bufnr].filetype,
+                'NULL_LS_FORMATTING'
+              ) > 0
 
           vim.lsp.buf.format {
             bufnr = bufnr,
@@ -83,10 +84,16 @@ return {
       --  Add any additional override configuration in the following tables. They will be passed to
       --  the `settings` field of the server config. You must look up that documentation yourself.
       local servers = {
-        -- clangd = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
+        clangd = {},
+        rust_analyzer = {
+          ['rust-analyzer'] = {
+            checkOnSave = {
+              command = 'clippy',
+            },
+          },
+        },
         gopls = {},
+        pyright = {},
         tsserver = {},
         lua_ls = {
           Lua = {
@@ -130,6 +137,7 @@ return {
     dependencies = { 'mason.nvim' },
     opts = function()
       local nls = require('null-ls')
+      local augroup = vim.api.nvim_create_augroup('LspFormatting', {})
       return {
         sources = {
           --nls.builtins.formatting.eslint_d,
@@ -137,13 +145,30 @@ return {
           nls.builtins.formatting.prettier,
           nls.builtins.formatting.eslint,
           nls.builtins.formatting.stylua,
+          nls.builtins.formatting.black,
+          nls.builtins.formatting.clang_format,
+          nls.builtins.formatting.rustfmt,
+          nls.builtins.formatting.gofmt,
           --nls.builtins.diagnostics.flake8,
         },
+        on_attach = function(client, bufnr)
+          if client.supports_method('textDocument/formatting') then
+            vim.api.nvim_clear_autocmds { group = augroup, buffer = bufnr }
+            vim.api.nvim_create_autocmd('BufWritePre', {
+              group = augroup,
+              buffer = bufnr,
+              callback = function()
+                vim.lsp.buf.format()
+              end,
+            })
+          end
+        end,
       }
     end,
   },
 
-  { -- Autocompletion
+  {
+    -- Autocompletion
     'hrsh7th/nvim-cmp',
     dependencies = {
       'hrsh7th/cmp-nvim-lsp',
@@ -167,12 +192,8 @@ return {
           ['<C-u>'] = cmp.mapping.scroll_docs(-4),
           ['<C-d>'] = cmp.mapping.scroll_docs(4),
           ['<C-.>'] = cmp.mapping.complete {},
-          ['<C-f>'] = cmp.mapping.confirm {
-            behavior = cmp.ConfirmBehavior.Replace,
-            select = true,
-          },
           ['<Right>'] = cmp.mapping.confirm {
-            behavior = cmp.ConfirmBehavior.Replace,
+            behavior = cmp.ConfirmBehavior.Insert,
             select = true,
           },
           ['<C-j>'] = cmp.mapping.select_next_item(),
